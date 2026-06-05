@@ -24,4 +24,4 @@ def home():
     return 'MedicalApp - Running API Restful'
 
 if __name__ == '__main__':
-    app.run(port=_get_required_env('PORT', int), debug=True, host='0.0.0.0')
+    app.run(port=_get_required_env('API_PORT', int), debug=True, host='0.0.0.0')
