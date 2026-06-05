@@ -7,7 +7,7 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parent / '.env')
 def _get_required_env(name, cast=str):
     value = os.getenv(name)
     if value is None or value == '':
-        raise RuntimeError(f'Missing required environment variable: {name}')
+        return ''
 
     try:
         return cast(value)
