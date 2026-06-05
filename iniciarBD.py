@@ -5,11 +5,12 @@ import os
 
 def ejecutar_setup():
     local_dir = os.path.dirname(os.path.abspath(__file__))
+    password = os.getenv('DB_PASSWORD', '')
     
     db = dbc.connect(
         host=_get_required_env('DB_HOST'),
         user=_get_required_env('DB_USER'),
-        passwd=_get_required_env('DB_PASSWORD'),
+        passwd=password,
         port=int(_get_required_env('DB_PORT')),
         cursorclass=dbc.cursors.DictCursor
     )
