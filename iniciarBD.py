@@ -4,6 +4,8 @@ from get_env import _get_required_env
 import os
 
 def ejecutar_setup():
+    local_dir = os.path.dirname(os.path.abspath(__file__))
+    
     db = dbc.connect(
         host=_get_required_env('DB_HOST'),
         user=_get_required_env('DB_USER'),
@@ -14,10 +16,10 @@ def ejecutar_setup():
     cursor = db.cursor()
 
     prefijo = _get_required_env('ENVUSERPRE')
-    ruta_sql = os.path.join('setup', 'database.sql')
+    ruta_sql = os.path.join(local_dir, 'setup', 'database.sql')
     
     if not os.path.isfile(ruta_sql):
-        ruta_sql = os.path.join('setup', 'database_base.sql')
+        ruta_sql = os.path.join(local_dir, 'setup', 'database_base.sql')
 
     with open(ruta_sql, 'r', encoding='utf-8') as archivo:
         contenido_sql = archivo.read()
