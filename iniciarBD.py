@@ -15,6 +15,9 @@ def ejecutar_setup():
 
     prefijo = _get_required_env('ENVUSERPRE')
     ruta_sql = os.path.join('setup', 'database.sql')
+    
+    if not os.path.isfile(ruta_sql):
+        ruta_sql = os.path.join('setup', 'database_base.sql')
 
     with open(ruta_sql, 'r', encoding='utf-8') as archivo:
         contenido_sql = archivo.read()
