@@ -1,0 +1,6 @@
+namenviroment.txt
+xk-*/
+__pycache__/
+*.pyc
+*.pyo
+setup/database.py
