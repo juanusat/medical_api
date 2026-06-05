@@ -3,6 +3,6 @@ xk-*/
 __pycache__/
 *.pyc
 *.pyo
-setup/database.py
+setup/database.sql
 .env
 .venv/
