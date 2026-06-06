@@ -1,3 +1,6 @@
+import os
+import re
+
 from flask import Blueprint, jsonify, send_from_directory
 from routes.common import respuesta, password_complejo, usuario
 from models.medico import Medico
@@ -6,6 +9,16 @@ from tools.jwt_required import jwt_token_requerido
 ws_medico = Blueprint('ws_medico', __name__)
 
 medico = Medico()
+
+def password_complejo(password):
+    if not password:
+        return False
+    patron = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$'
+    return re.match(patron, password) is not None
+
+
+def respuesta(data, message, status=True, code=200):
+    return jsonify({'status': status, 'data': data, 'message': message}), code
 
 @ws_medico.route('/medicos', methods=['POST'])
 @jwt_token_requerido
@@ -118,7 +131,6 @@ def listar_citas_medico(id_medico):
 @ws_medico.route('/medicos/<int:id>/imagen', methods=['GET'])
 @jwt_token_requerido
 def obtener_imagen(id):
-    print("alapez")
     #validar si se cuenta con el id para obtener la foto
     if not all([id]):
         return jsonify({'status': False, 'data': None, 'message': 'Faltan datos obligatorios'}), 400

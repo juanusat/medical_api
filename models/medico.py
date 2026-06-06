@@ -1,7 +1,7 @@
 from conexionBD import Conexion
+from tools.security import hash_password
 import MySQLdb
 from .auth import Auth
-
 class Medico:
     def crear_medico(self, data):
         con = Conexion().open
@@ -16,15 +16,16 @@ class Medico:
                     (SELECT id FROM estado_usuario WHERE nombre = 'ACTIVO' LIMIT 1)
                 )
             """
+            
             hashed = Auth()._hash_password(data['password'])
-            cursor.execute(sql_usuario, [data['email'], hashed])
+            cursor.execute(sql_usuario, [data['email'], hash_password(data['password'])])
             usuario_id = cursor.lastrowid
 
             sql_medico = """
                 INSERT INTO medico (
                     usuario_id, nombres, apellidos, dni, cmp, telefono, consultorio, estado_medico_id
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, (SELECT id FROM estado_medico WHERE nombre = 'ACTIVO' LIMIT 1))
             """
             cursor.execute(sql_medico, [
                 usuario_id,
@@ -33,10 +34,16 @@ class Medico:
                 data['dni'],
                 data['cmp'],
                 data.get('telefono'),
-                data.get('consultorio'),
-                data['estado_medico_id']
+                data.get('consultorio')
             ])
-            medico_id = cursor.lastrowid
+            medico_id = cursor.lastrowid 
+            
+            sql_medico_especialidades = "INSERT INTO medico_especialidad (medico_id, especialidad_id) VALUES (%s, %s)"
+            cursor.execute(sql_medico_especialidades, [
+                medico_id,
+                data['especialidad_id']
+            ])
+            
             con.commit()
             return {'usuario_id': usuario_id, 'medico_id': medico_id, 'email': data['email']}
         except MySQLdb.IntegrityError:
@@ -119,7 +126,7 @@ class Medico:
         cursor.close()
         con.close()
         return actualizado
-
+    
     def eliminar_medico(self, medico_id):
         con = Conexion().open
         cursor = con.cursor()
@@ -130,11 +137,22 @@ class Medico:
                 return False
 
             usuario_id = fila['usuario_id']
+            
+            # Eliminar citas asociadas a los horarios del médico
             cursor.execute("DELETE FROM cita WHERE horario_disponible_id IN (SELECT id FROM horario_disponible WHERE medico_id = %s)", [medico_id])
+            
+            # Eliminar horarios disponibles del médico
             cursor.execute("DELETE FROM horario_disponible WHERE medico_id = %s", [medico_id])
+            
+            # Eliminar relaciones médico-especialidad
             cursor.execute("DELETE FROM medico_especialidad WHERE medico_id = %s", [medico_id])
+            
+            # Eliminar el médico
             cursor.execute("DELETE FROM medico WHERE id = %s", [medico_id])
+            
+            # Eliminar el usuario asociado
             cursor.execute("DELETE FROM usuario WHERE id = %s", [usuario_id])
+            
             con.commit()
             return True
         except Exception:
@@ -143,7 +161,7 @@ class Medico:
         finally:
             cursor.close()
             con.close()
-
+            
     def listar_medicos_por_especialidad(self, especialidad_id):
         con = Conexion().open
         cursor = con.cursor()
@@ -152,7 +170,10 @@ class Medico:
                 m.id AS medico_id,
                 CONCAT(m.nombres, ' ', m.apellidos) AS medico,
                 m.cmp,
+		m.telefono,
                 m.consultorio,
+                m.dni,
+                m.cmp,
                 e.id AS especialidad_id,
                 e.nombre AS especialidad
             FROM medico_especialidad me
@@ -166,7 +187,7 @@ class Medico:
         cursor.close()
         con.close()
         return resultados
-
+    
     def obtener_imagen(self, medico_id):
             #Abrir conexión
             con = Conexion().open
@@ -195,4 +216,3 @@ class Medico:
                 return resultado
             else: #No se encontró la imagen
                 return None
-        

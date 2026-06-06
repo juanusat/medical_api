@@ -1,21 +1,28 @@
-from flask import Blueprint, request, jsonify, send_from_directory
+import os
+import re
+from flask import Blueprint, request, jsonify, send_from_directory, g
+from werkzeug.utils import secure_filename
 from routes.common import respuesta, usuario
 from models.especialidad import Especialidad
+from tools.jwt_utils import generar_token
 from tools.jwt_required import jwt_token_requerido
 
 ws_especialidad = Blueprint('ws_especialidad', __name__)
-
 especialidad = Especialidad()
+
+
+def respuesta(data, message, status=True, code=200):
+    return jsonify({'status': status, 'data': data, 'message': message}), code
 
 @ws_especialidad.route('/especialidades', methods=['POST'])
 @jwt_token_requerido
 def registrar_especialidad():
     try:
-        data = __import__('flask').request.get_json() or {}
+        data = request.get_json() or {}
         if not data.get('nombre'):
             return respuesta(None, 'Campos obligatorios vacíos', False, 400)
 
-        creado = usuario.crear_especialidad(data)
+        creado = especialidad.crear_especialidad(data)
         if not creado:
             return respuesta(None, 'Especialidad duplicada o inválida', False, 400)
 
@@ -46,6 +53,7 @@ def listar_especialidades():
         }), 200
     except Exception as e:
         return jsonify({'data': None, 'message': str(e), 'status': False}), 500
+
 
 
 @ws_especialidad.route('/especialidades/<int:id_especialidad>', methods=['GET'])
@@ -80,14 +88,13 @@ def actualizar_especialidad(id_especialidad):
 @jwt_token_requerido
 def eliminar_especialidad(id_especialidad):
     try:
-        ok = usuario.eliminar_especialidad(id_especialidad)
+        ok = especialidad.eliminar_especialidad(id_especialidad)
         if not ok:
             return respuesta(None, 'Especialidad inexistente', False, 404)
         return respuesta({'especialidad_id': id_especialidad}, 'Especialidad eliminada correctamente', True, 200)
     except Exception as e:
         return respuesta(None, str(e), False, 500)
-    
-# E.6 Obtener la imagen de la especialidad
+
 @ws_especialidad.route('/especialidades/<int:id>/imagen', methods=['GET'])
 @jwt_token_requerido
 def obtener_imagen(id):

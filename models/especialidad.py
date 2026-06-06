@@ -21,7 +21,6 @@ class Especialidad:
         con.close()
         
         return resultado
-
     def crear_especialidad(self, data):
         con = Conexion().open
         cursor = con.cursor()
@@ -41,7 +40,7 @@ class Especialidad:
     def listar_especialidades(self):
         con = Conexion().open
         cursor = con.cursor()
-        sql = "SELECT id, nombre, descripcion FROM especialidad ORDER BY id"
+        sql = "SELECT id, nombre, descripcion, imagen_url FROM especialidad ORDER BY id"
         cursor.execute(sql)
         resultados = cursor.fetchall()
         cursor.close()
