@@ -25,7 +25,7 @@ def respuesta(data, message, status=True, code=200):
 def registrar_medico():
     try:
         data = __import__('flask').request.get_json() or {}
-        obligatorios = ['email', 'password', 'nombres', 'apellidos', 'dni', 'cmp', 'estado_medico_id']
+        obligatorios = ['email', 'password', 'nombres', 'apellidos', 'dni', 'cmp']
         if not all(data.get(k) for k in obligatorios):
             return respuesta(None, 'Campos obligatorios vacíos', False, 400)
 
