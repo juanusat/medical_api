@@ -170,7 +170,7 @@ class Medico:
                 m.id AS medico_id,
                 CONCAT(m.nombres, ' ', m.apellidos) AS medico,
                 m.cmp,
-		m.telefono,
+		        m.telefono,
                 m.consultorio,
                 m.dni,
                 m.cmp,
@@ -188,31 +188,13 @@ class Medico:
         con.close()
         return resultados
     
-    def obtener_imagen(self, medico_id):
-            #Abrir conexión
-            con = Conexion().open
-            
-            #Crear un cursor para ejecutar una sentencia SQL
-            cursor = con.cursor()
-            
-            #Definir la sentencia SQL
-            sql = """
-            select coalesce(imagen_url, 'x') as imagen_url from medico where id = %s
-            """
-            
-            #Ejecutar la sentencia SQL
-            cursor.execute(sql, [medico_id])
-            
-            #Recuperar los datos
-            resultado = cursor.fetchone()
-            
-            #Cerrar el cursor y la conexión
-            cursor.close()
-            con.close()
-            
-            print(resultado)
-            #Verificar si se encontró la imagen¬
-            if resultado and resultado['imagen_url'] != 'x':
-                return resultado
-            else: #No se encontró la imagen
-                return None
+    def obtener_imagen(self,medico_id): 
+        con = Conexion().open
+        cursor = con.cursor()
+        sql = "SELECT imagen_url FROM medico WHERE id = %s"
+        cursor.execute(sql, [medico_id])
+        con.commit()
+        resultado = cursor.fetchone()
+        cursor.close()
+        con.close()
+        return resultado

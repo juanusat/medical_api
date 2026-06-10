@@ -113,8 +113,28 @@ def eliminar_medico(id_medico):
 @jwt_token_requerido
 def listar_medicos_por_especialidad(id_especialidad):
     try:
-        data = usuario.listar_medicos_por_especialidad(id_especialidad)
-        return respuesta(data, 'Lista de médicos por especialidad obtenida correctamente', True, 200)
+        resultado = medico.listar_medicos_por_especialidad(id_especialidad)
+
+        data = []
+        for row in resultado:
+            data.append({
+                "medico_id": row["medico_id"],
+                "medico": row["medico"],
+                "dni": row["dni"],
+                "cmp": row["cmp"],
+                "telefono": row["telefono"],
+                "especialidad_id": row["especialidad_id"],
+                "especialidad": row["especialidad"],
+                "consultorio": row["consultorio"],
+                "imagen_url": f"medicos/{row['medico_id']}/imagen"
+            })
+
+        return jsonify({
+            'data': data,
+            'message': 'Lista de especialidades obtenida correctamente',
+            'status': True
+        }), 200
+
     except Exception as e:
         return respuesta(None, str(e), False, 500)
 
