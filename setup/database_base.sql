@@ -115,7 +115,7 @@ CREATE TABLE medico (
     telefono VARCHAR(15),
     consultorio VARCHAR(20),
     estado_medico_id INT NOT NULL,
-    imagen_url VARCHAR(255),
+    imagen_url VARCHAR(255) default 'default.png',
     FOREIGN KEY (usuario_id) REFERENCES usuario(id),
     FOREIGN KEY (estado_medico_id) REFERENCES estado_medico(id)
 );
@@ -261,11 +261,11 @@ INSERT INTO especialidad (nombre, descripcion, imagen_url) VALUES
 -- =====================================================
 
 INSERT INTO medico (usuario_id, nombres, apellidos, dni, cmp, telefono, consultorio, estado_medico_id, imagen_url) VALUES
-(4, 'María', 'López Gómez', '76789012', 'CMP1001', '955333444', '101', 1, '1.jpg'),
-(5, 'Carlos', 'Ramírez Torres', '77890123', 'CMP1002', '955444555', '202', 1, '1.jpg'),
-(6, 'Andrea', 'Castillo Pérez', '78901234', 'CMP1003', '955555666', '203', 1, '1.jpg'),
-(7, 'Luis', 'Fernández Díaz', '79012345', 'CMP1004', '955666777', '104', 1, '1.jpg'),
-(8, 'Rosa', 'Mendoza Silva', '70123456', 'CMP1005', '955777888', '305', 1, '1.jpg');
+(4, 'María', 'López Gómez', '76789012', 'CMP1001', '955333444', '101', 1, '2.png'),
+(5, 'Carlos', 'Ramírez Torres', '77890123', 'CMP1002', '955444555', '202', 1, '2.png'),
+(6, 'Andrea', 'Castillo Pérez', '78901234', 'CMP1003', '955555666', '203', 1, '3.png'),
+(7, 'Luis', 'Fernández Díaz', '79012345', 'CMP1004', '955666777', '104', 1, '4.png'),
+(8, 'Rosa', 'Mendoza Silva', '70123456', 'CMP1005', '955777888', '305', 1, '5.png');
 
 -- =====================================================
 -- RELACIÓN MÉDICO - ESPECIALIDAD
