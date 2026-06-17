@@ -120,8 +120,8 @@ class Usuario:
         return self.medico_especialidad.eliminar_medico_especialidad(relacion_id)
 
     # Horarios
-    def horarios_disponibles(self, especialidad_id, fecha):
-        return self.horario.horarios_disponibles(especialidad_id, fecha)
+    def horarios_disponibles(self, especialidad_id, fecha_inicio=None, fecha_fin=None):
+        return self.horario.horarios_disponibles(especialidad_id, fecha_inicio, fecha_fin)
 
     # Citas
     def registrar_cita(self, data, creado_por_usuario_id):

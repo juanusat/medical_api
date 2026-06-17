@@ -1,4 +1,6 @@
-from flask import Blueprint
+import json
+
+from flask import Blueprint, request
 from routes.common import respuesta, usuario
 from tools.jwt_required import jwt_token_requerido
 
@@ -9,11 +11,22 @@ ws_horarios = Blueprint('ws_horarios', __name__)
 @jwt_token_requerido
 def horarios_disponibles():
     try:
-        data = __import__('flask').request.get_json() or {}
-        if not data.get('especialidad_id') or not data.get('fecha'):
+        data = request.get_json() or {}
+        print('DATA HORARIOS DISPONIBLES:', data)
+        if not data:
+            return respuesta(None, 'Campos obligatorios vacíos', False, 400)
+        else:
+            especialidad_id = data.get('especialidad_id')
+            fecha_inicio = data.get('fecha_inicio') or data.get('fecha')
+            fecha_fin = data.get('fecha_fin') or data.get('fecha')
+
+        if not especialidad_id:
             return respuesta(None, 'Campos obligatorios vacíos', False, 400)
 
-        resultados = usuario.horarios_disponibles(data['especialidad_id'], data['fecha'])
+        if fecha_inicio and fecha_fin and fecha_inicio > fecha_fin:
+            return respuesta(None, 'La fecha inicio no puede ser mayor que la fecha fin', False, 400)
+
+        resultados = usuario.horarios_disponibles(especialidad_id, fecha_inicio, fecha_fin)
         return respuesta(resultados, 'Horarios disponibles obtenidos correctamente', True, 200)
     except Exception as e:
         return respuesta(None, str(e), False, 500)
