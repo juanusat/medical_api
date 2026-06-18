@@ -5,21 +5,19 @@ class Horario:
         con = Conexion().open
         cursor = con.cursor()
 
-        condiciones = ["hd.especialidad_id = %s", "ehd.nombre = 'DISPONIBLE'", "em.nombre = 'ACTIVO'"]
-        parametros = [especialidad_id]
-
-        if fecha_inicio:
-            condiciones.append("hd.fecha >= %s")
-            parametros.append(fecha_inicio)
-
-        if fecha_fin:
-            condiciones.append("hd.fecha <= %s")
-            parametros.append(fecha_fin)
+        condiciones = [
+            "hd.especialidad_id = %s",
+            "hd.fecha BETWEEN %s AND %s",
+            "ehd.nombre = 'DISPONIBLE'",
+            "em.nombre = 'ACTIVO'",
+            "CAST(CONCAT(hd.fecha, ' ', hd.hora_inicio) AS DATETIME) > NOW()",
+        ]
+        parametros = [especialidad_id, fecha_inicio, fecha_fin]
 
         sql = f"""
             SELECT
                 hd.id AS horario_disponible_id,
-                hd.fecha,
+                DATE_FORMAT(hd.fecha, '%%Y-%%m-%%d') AS fecha,
                 TIME_FORMAT(hd.hora_inicio, '%%H:%%i') AS hora_inicio,
                 TIME_FORMAT(hd.hora_fin, '%%H:%%i') AS hora_fin,
 
