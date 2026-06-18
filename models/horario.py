@@ -47,8 +47,6 @@ class Horario:
                 hd.hora_inicio,
                 medico
         """
-        print('SQL HORARIOS DISPONIBLES:', sql)
-        print('PARAMETROS HORARIOS DISPONIBLES:', parametros)
         cursor.execute(sql, parametros)
         resultados = cursor.fetchall()
         cursor.close()

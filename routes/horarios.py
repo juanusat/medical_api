@@ -12,7 +12,6 @@ ws_horarios = Blueprint('ws_horarios', __name__)
 def horarios_disponibles():
     try:
         data = request.get_json() or {}
-        print('DATA HORARIOS DISPONIBLES:', data)
         if not data:
             return respuesta(None, 'Campos obligatorios vacíos', False, 400)
         else:
