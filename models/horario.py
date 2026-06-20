@@ -58,8 +58,8 @@ class Horario:
                 medico
         """
         
-        print('SQL EJECUTADO:', sql)
-        print('PARAMETROS:', parametros)
+        # print('SQL EJECUTADO:', sql)
+        # print('PARAMETROS:', parametros)
         
         cursor.execute(sql, parametros)
         resultados = cursor.fetchall()
