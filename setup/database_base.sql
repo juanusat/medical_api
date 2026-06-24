@@ -43,7 +43,7 @@ CREATE TABLE rol (
 );
 
 -- =====================================================
--- TABLA: usuario
+-- TABLA: usuario y usuario_fcm
 -- =====================================================
 
 CREATE TABLE usuario (
@@ -58,6 +58,20 @@ CREATE TABLE usuario (
 );
 ALTER TABLE usuario ADD COLUMN foto VARCHAR(20);
 ALTER TABLE usuario ADD COLUMN fecha_hora_actualizacion TIMESTAMP;
+
+CREATE TABLE usuario_fcm (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    usuario_id INT(11) NOT NULL,
+    dispositivo VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci',
+    token TEXT NOT NULL COLLATE 'latin1_swedish_ci',
+    fecha_hora_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado_id INT(11) NOT NULL DEFAULT '1',
+    PRIMARY KEY (id) USING BTREE,
+    INDEX fk_usuario_fcm (usuario_id) USING BTREE,
+    INDEX fk_usuario_fcm_estado (estado_id) USING BTREE,
+    CONSTRAINT fk_usuario_fcm FOREIGN KEY (usuario_id) REFERENCES usuario (id),
+    CONSTRAINT fk_usuario_fcm_estado FOREIGN KEY (estado_id) REFERENCES estado_usuario (id)
+);
 -- =====================================================
 -- TABLA: paciente
 -- =====================================================
