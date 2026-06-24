@@ -10,7 +10,8 @@ class Horario:
             "hd.especialidad_id = %s",
             "ehd.nombre = 'DISPONIBLE'",
             "em.nombre = 'ACTIVO'",
-            "CAST(CONCAT(hd.fecha, ' ', hd.hora_inicio) AS DATETIME) > NOW()"
+            "CAST(CONCAT(hd.fecha, ' ', hd.hora_inicio) AS DATETIME) > NOW()",
+            "c.id IS NULL"  # <--- NUEVA CONDICIÓN: solo horarios SIN cita
         ]
         
         # El primer parámetro siempre será el ID de la especialidad
@@ -25,7 +26,7 @@ class Horario:
             condiciones.append("hd.fecha = %s")
             parametros.append(fecha_inicio)
 
-        # 3. Armamos el SQL con la solución a prueba de balas para los tipos de dato (CAST)
+        # 3. Armamos el SQL con LEFT JOIN para detectar citas existentes
         sql = f"""
             SELECT
                 hd.id AS horario_disponible_id,
@@ -51,6 +52,8 @@ class Horario:
                 ON hd.estado_horario_disponible_id = ehd.id
             INNER JOIN estado_medico em
                 ON m.estado_medico_id = em.id
+            LEFT JOIN cita c  -- <--- LEFT JOIN para detectar citas
+                ON hd.id = c.horario_disponible_id
             WHERE {' AND '.join(condiciones)}
             ORDER BY
                 hd.fecha,
