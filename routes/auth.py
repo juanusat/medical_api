@@ -121,3 +121,24 @@ def cambiar_password(id_usuario):
         return respuesta({'usuario_id': id_usuario}, 'Contraseña actualizada correctamente', True, 200)
     except Exception as e:
         return respuesta(None, str(e), False, 500)
+
+
+@ws_usuario.route('/usuarios/registrar/token', methods=['PUT'])
+@jwt_token_requerido
+def registrar_token():
+    data = request.get_json()
+    usuario_id = data.get('id')
+    token = data.get('token')
+    dispositivo = data.get('dispositivo')
+
+    if not all([usuario_id, token, dispositivo]):
+        return respuesta(None, 'Faltan datos obligatorios', False, 400)
+
+    try:
+        estado, mensaje = usuario.registrar_token_dispositivo(usuario_id, dispositivo, token)
+        if estado:
+            return respuesta(None, 'Token registrado correctamente', True, 200)
+        else:
+            return respuesta(None, mensaje, False, 200)
+    except Exception as e:
+        return respuesta(None, str(e), False, 500)

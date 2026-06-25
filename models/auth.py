@@ -124,3 +124,40 @@ class Auth:
         cursor.close()
         con.close()
         return 'OK'
+
+    def registrar_token_dispositivo(self, usuario_id, dispositivo, token):
+        con = Conexion().open
+        cursor = con.cursor()
+
+        try:
+            sql_verificar = """
+                SELECT COUNT(*) as cantidad FROM usuario_fcm
+                WHERE usuario_id = %s AND dispositivo = %s AND token = %s
+            """
+            cursor.execute(sql_verificar, [usuario_id, dispositivo, token])
+            existe = cursor.fetchone()['cantidad']
+
+            if existe == 0:
+                sql_inhabilitar_token_antiguos = """
+                    UPDATE usuario_fcm SET estado_id = 2
+                    WHERE usuario_id = %s AND dispositivo = %s AND estado_id = 1
+                """
+                cursor.execute(sql_inhabilitar_token_antiguos, [usuario_id, dispositivo])
+
+                sql_nuevo_token = """
+                    INSERT INTO usuario_fcm (usuario_id, dispositivo, token, estado_id)
+                    VALUES (%s, %s, %s, 1)
+                """
+                cursor.execute(sql_nuevo_token, [usuario_id, dispositivo, token])
+
+                con.commit()
+                return True, 'ok'
+            else:
+                return False, 'El token ya esta registrado para el dispositivo'
+
+        except Exception as e:
+            con.rollback()
+            return False, str(e)
+        finally:
+            cursor.close()
+            con.close()

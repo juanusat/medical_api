@@ -7,6 +7,7 @@ from .medico_especialidad import MedicoEspecialidad
 from .horario import Horario
 from .citas import Cita
 
+
 class Usuario:
     """Fachada que delega operaciones a modelos especializados."""
     def __init__(self):
@@ -135,3 +136,6 @@ class Usuario:
 
     def listar_citas_medico(self, medico_id):
         return self.cita.listar_citas_medico(medico_id)
+
+    def registrar_token_dispositivo(self, usuario_id, dispositivo, token):
+        return self.auth.registrar_token_dispositivo(usuario_id, dispositivo, token)
