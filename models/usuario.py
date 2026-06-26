@@ -53,6 +53,9 @@ class Usuario:
     def eliminar_paciente(self, paciente_id):
         return self.paciente.eliminar_paciente(paciente_id)
 
+    def obtener_paciente_por_usuario_id(self, usuario_id):
+        return self.paciente.obtener_paciente_por_usuario_id(usuario_id)
+
     # Medico
     def crear_medico(self, data):
         return self.medico.crear_medico(data)

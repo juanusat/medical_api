@@ -3,6 +3,29 @@ import MySQLdb
 from .auth import Auth
 
 class Paciente:
+    def obtener_paciente_por_usuario_id(self, usuario_id):
+        con = Conexion().open
+        cursor = con.cursor()
+        sql = """
+            SELECT
+                id AS paciente_id,
+                usuario_id,
+                nombres,
+                apellidos,
+                dni,
+                celular,
+                fecha_nacimiento,
+                genero
+            FROM paciente
+            WHERE usuario_id = %s
+            LIMIT 1
+        """
+        cursor.execute(sql, [usuario_id])
+        resultado = cursor.fetchone()
+        cursor.close()
+        con.close()
+        return resultado
+
     def crear_paciente(self, data):
         con = Conexion().open
         cursor = con.cursor()
