@@ -161,3 +161,17 @@ class Auth:
         finally:
             cursor.close()
             con.close()
+
+    def obtener_token_usuario(self, usuario_id):
+        con = Conexion().open
+        cursor = con.cursor()
+        sql = "SELECT token FROM usuario_fcm WHERE usuario_id = %s AND estado_id = 1"
+        cursor.execute(sql, [usuario_id])
+        resultado = cursor.fetchall()
+        cursor.close()
+        con.close()
+
+        if resultado:
+            return resultado
+        else:
+            return None

@@ -4,7 +4,8 @@ from werkzeug.utils import secure_filename
 from routes.common import respuesta, password_complejo, extension_permitida, usuario
 from tools.jwt_utils import generar_token
 from tools.jwt_required import jwt_token_requerido
-
+import firebase.fcm as fcm
+import datetime
 ws_usuario = Blueprint('ws_usuario', __name__)
 
 
@@ -26,6 +27,9 @@ def login():
             resultado.pop('clave', None)
             token = generar_token({'usuario_id': resultado['usuario_id']}, 600)
             resultado['token'] = token
+            ahora = datetime.datetime.now()
+            fecha_hora_formato = ahora.strftime("%Y-%m-%d %H:%M:%S")
+            fcm.enviar_notificacion(resultado['usuario_id'], 'Medical App', f'Inicio de sesión satisfactorio el {fecha_hora_formato}')
             return respuesta(resultado, 'Inicio de sesión satisfactorio', True, 200)
         else:
             return respuesta(None, 'Credenciales incorrectas', False, 401)

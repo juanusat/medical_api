@@ -37,6 +37,9 @@ class Usuario:
     def cambiar_password(self, usuario_id, password_actual, password_nueva):
         return self.auth.cambiar_password(usuario_id, password_actual, password_nueva)
 
+    def obtener_token_usuario(self, usuario_id):
+        return self.auth.obtener_token_usuario(usuario_id)
+
     # Paciente
     def crear_paciente(self, data):
         return self.paciente.crear_paciente(data)
