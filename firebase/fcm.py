@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import datetime
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from models.auth import Auth
@@ -58,6 +59,9 @@ def _enviar_mensaje(access_token, project_id, device_token, title, body):
             'notification': {
                 'title': title,
                 'body': body,
+            },
+            'data': {
+                'timestamp': str(datetime.datetime.utcnow())
             }
         }
     }
