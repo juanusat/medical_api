@@ -3,11 +3,12 @@ import json
 import os
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
-from conexionBD import Conexion
+from models.auth import Auth
 
 
 def enviar_notificacion(usuario_id, title, body):
-    tokens = _obtener_tokens_usuario(usuario_id)
+    auth = Auth()
+    tokens = auth.obtener_token_usuario(usuario_id)
     if not tokens:
         return False
 
@@ -24,17 +25,6 @@ def enviar_notificacion(usuario_id, title, body):
         _enviar_mensaje(access_token, project_id, token_row['token'], title, body)
 
     return True
-
-
-def _obtener_tokens_usuario(usuario_id):
-    con = Conexion().open
-    cursor = con.cursor()
-    sql = "SELECT token FROM usuario_fcm WHERE usuario_id = %s AND estado_id = 1"
-    cursor.execute(sql, [usuario_id])
-    resultado = cursor.fetchall()
-    cursor.close()
-    con.close()
-    return resultado
 
 
 def _obtener_ruta_service_account():
